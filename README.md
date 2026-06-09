@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ML Math Intuitions
+
+Interactive visual explorations of the core mathematical ideas powering modern machine learning.
+
+> **See the math behind the machine.**
+
+Rather than memorizing formulas, this site lets you *play* with the concepts: drag sliders, watch transformations unfold, and build geometric intuition for ideas that usually live in dense notation.
+
+## Topics
+
+### Foundations
+- **Eigenvalues & Neural Networks** -- Why deep networks explode or vanish, told through the lens of spectral theory and weight matrix eigenvalues.
+- **Matrix Calculus Visualized** -- Scalar derivatives, gradients, Jacobians, and Hessians rendered as interactive geometry.
+- **Loss Landscapes & Forgetting** -- Fine-tune a model and watch catastrophic forgetting reshape the loss surface in real time.
+
+### Generative Models
+- **Probabilistic Generative Models** -- What it means to learn p(x), and the shared DNA connecting GANs, VAEs, and diffusion models.
+- **Variational Autoencoders** -- Compress high-dimensional data into a handful of latent dimensions, then reconstruct it.
+- **Diffusion Models** -- Destroy an image with noise, then learn to reverse time -- from Langevin dynamics to denoising score matching.
+
+### Geometry & Dynamics
+- **The Manifold Hypothesis** -- Why high-dimensional data secretly lives on low-dimensional structures, visualized with Swiss rolls and hypercubes.
+- **ODEs & SDEs in ML** -- From Newton to Neural ODEs: the mathematics of continuous-depth networks and stochastic flows.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Next.js 16](https://nextjs.org/) with App Router and Turbopack
+- Canvas-based animations via `requestAnimationFrame`
+- No heavy visualization libraries -- every animation is hand-written for minimal bundle size
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+Deploy with [Vercel](https://vercel.com):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npx vercel
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
