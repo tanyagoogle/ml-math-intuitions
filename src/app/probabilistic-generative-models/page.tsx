@@ -1,27 +1,205 @@
+"use client";
+
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import homeStyles from '../page.module.css';
 import vizStyles from './visualization.module.css';
 import ModelFamilyViz from '../../components/ModelFamilyViz';
 
-export const metadata = {
-  title: 'Probabilistic Generative Models - Math Intuitions',
-  description: 'Understanding p(x), latent spaces, and how GANs, VAEs, Diffusion, and Autoregressive models approach generation',
-};
+const SECTIONS = [
+  { id: 'what-is-px', shortLabel: 'What is p(x)?' },
+  { id: 'latent-space', shortLabel: 'Latent Space' },
+  { id: 'two-distributions', shortLabel: 'Two Distributions' },
+  { id: 'four-families', shortLabel: 'Four Families' },
+  { id: 'gans', shortLabel: 'GANs' },
+  { id: 'vaes', shortLabel: 'VAEs' },
+  { id: 'diffusion', shortLabel: 'Diffusion' },
+  { id: 'autoregressive', shortLabel: 'Autoregressive' },
+  { id: 'summary', shortLabel: 'Summary' },
+  { id: 'takeaways', shortLabel: 'Takeaways' },
+  { id: 'frontiers', shortLabel: 'Frontiers' },
+];
 
 export default function ProbabilisticGenerativeModelsPage() {
+  const [activeSection, setActiveSection] = useState(SECTIONS[0].id);
+  const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 200;
+      let currentSection = SECTIONS[0].id;
+      sectionRefs.current.forEach((element, id) => {
+        if (element && scrollPosition >= element.offsetTop) {
+          currentSection = id;
+        }
+      });
+      setActiveSection(currentSection);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = useCallback((id: string) => {
+    const element = sectionRefs.current.get(id);
+    if (element) {
+      const y = element.getBoundingClientRect().top + window.pageYOffset - 100;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }, []);
+
+  const setSectionRef = useCallback((id: string) => (el: HTMLElement | null) => {
+    if (el) sectionRefs.current.set(id, el);
+  }, []);
+
   return (
-    <div className="container" style={{ paddingBottom: '4rem' }}>
-      <header className={homeStyles.header}>
-        <Link href="/" style={{ color: 'var(--text-secondary)', textDecoration: 'none', marginBottom: '1rem', display: 'inline-block' }}>
+    <div style={{
+      maxWidth: '1400px',
+      margin: '0 auto',
+      padding: '2rem 3rem 4rem 3rem',
+    }}>
+      <header style={{
+        position: 'fixed',
+        top: 0,
+        left: '240px',
+        right: 0,
+        background: 'hsla(240, 10%, 4%, 0.95)',
+        backdropFilter: 'blur(12px)',
+        padding: '1rem 3rem',
+        zIndex: 50,
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+      }}>
+        <Link href="/" style={{
+          color: 'var(--text-dim)',
+          textDecoration: 'none',
+          fontSize: '0.85rem',
+          display: 'inline-block',
+          marginBottom: '0.5rem',
+        }}>
           &larr; Back to Concepts
         </Link>
-        <h1 className="title-gradient">Probabilistic Generative Models</h1>
-        <p className={homeStyles.subtitle}>The art of learning to sample from reality</p>
+        <h1 style={{
+          fontSize: '1.75rem',
+          fontWeight: 800,
+          background: 'linear-gradient(135deg, #00f3ff 0%, #a78bfa 50%, #ff6b6b 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          margin: 0,
+          marginBottom: '0.25rem',
+        }}>
+          Probabilistic Generative Models
+        </h1>
+        <p style={{
+          color: 'var(--text-secondary)',
+          fontSize: '0.95rem',
+          margin: 0,
+        }}>
+          The art of learning to sample from reality
+        </p>
       </header>
+      <div style={{ height: '140px' }} />
 
-      <section style={{ maxWidth: '800px', margin: '0 auto' }}>
+      <div className="timeline-main" style={{
+        display: 'flex',
+        gap: '2.5rem',
+        position: 'relative',
+        marginLeft: '220px',
+      }}>
+        <nav style={{
+          position: 'fixed',
+          top: '2rem',
+          left: '2rem',
+          width: '200px',
+          background: 'hsla(240, 10%, 6%, 0.95)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '12px',
+          padding: '1.25rem 1rem 1.25rem 1.5rem',
+          zIndex: 100,
+        }} className="timeline-nav">
+          <div style={{
+            fontSize: '0.7rem',
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            color: 'var(--text-dim)',
+            marginBottom: '1rem',
+            paddingLeft: '1.5rem',
+          }}>
+            On this page
+          </div>
+          <div style={{
+            position: 'relative',
+            paddingLeft: '1.5rem',
+          }}>
+            <div style={{
+              position: 'absolute',
+              left: '5px',
+              top: '4px',
+              bottom: '4px',
+              width: '3px',
+              background: 'rgba(255, 255, 255, 0.08)',
+              borderRadius: '2px',
+            }} />
+            {SECTIONS.map((section, index) => {
+              const isActive = activeSection === section.id;
+              const isPast = SECTIONS.findIndex(s => s.id === activeSection) > index;
+              return (
+                <button
+                  key={section.id}
+                  onClick={() => scrollToSection(section.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    width: '100%',
+                    padding: '0.6rem 0',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    position: 'relative',
+                  }}
+                >
+                  <span style={{
+                    position: 'absolute',
+                    left: '-1.5rem',
+                    width: '13px',
+                    height: '13px',
+                    borderRadius: '50%',
+                    background: isActive
+                      ? 'var(--text-primary)'
+                      : isPast
+                        ? 'rgba(255, 255, 255, 0.5)'
+                        : 'rgba(255, 255, 255, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s ease',
+                    boxShadow: isActive ? '0 0 8px rgba(255, 255, 255, 0.3)' : 'none',
+                  }} />
+                  <span style={{
+                    fontSize: '0.95rem',
+                    fontWeight: isActive ? 600 : 400,
+                    color: isActive
+                      ? 'var(--text-primary)'
+                      : isPast
+                        ? 'var(--text-secondary)'
+                        : 'var(--text-dim)',
+                    lineHeight: 1.4,
+                    transition: 'all 0.2s ease',
+                  }}>
+                    {section.shortLabel}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </nav>
 
-        <div className={vizStyles.section}>
+        <main style={{ flex: 1, minWidth: 0, maxWidth: '800px' }}>
+
+        <div id="what-is-px" ref={setSectionRef('what-is-px')} className={vizStyles.section}>
           <h2 className={vizStyles.sectionTitle}>The Central Question: What is p(x)?</h2>
 
           <p className={vizStyles.prose}>
@@ -56,7 +234,7 @@ export default function ProbabilisticGenerativeModelsPage() {
           </div>
         </div>
 
-        <div className={vizStyles.section}>
+        <div id="latent-space" ref={setSectionRef('latent-space')} className={vizStyles.section}>
           <h2 className={vizStyles.sectionTitle}>Why Latent Space? The Curse of Dimensionality</h2>
 
           <p className={vizStyles.prose}>
@@ -97,7 +275,7 @@ export default function ProbabilisticGenerativeModelsPage() {
           </div>
         </div>
 
-        <div className={vizStyles.section}>
+        <div id="two-distributions" ref={setSectionRef('two-distributions')} className={vizStyles.section}>
           <h2 className={vizStyles.sectionTitle}>The Two Fundamental Distributions</h2>
 
           <p className={vizStyles.prose}>
@@ -140,7 +318,7 @@ export default function ProbabilisticGenerativeModelsPage() {
           </div>
         </div>
 
-        <div className={vizStyles.section}>
+        <div id="four-families" ref={setSectionRef('four-families')} className={vizStyles.section}>
           <h2 className={vizStyles.sectionTitle}>Four Model Families, Four Philosophies</h2>
 
           <p className={vizStyles.prose}>
@@ -156,7 +334,7 @@ export default function ProbabilisticGenerativeModelsPage() {
           </div>
         </div>
 
-        <div className={vizStyles.section}>
+        <div id="gans" ref={setSectionRef('gans')} className={vizStyles.section}>
           <h2 className={vizStyles.sectionTitle}>GANs: Implicit Density via Adversarial Training</h2>
 
           <p className={vizStyles.prose}>
@@ -215,7 +393,7 @@ export default function ProbabilisticGenerativeModelsPage() {
           </p>
         </div>
 
-        <div className={vizStyles.section}>
+        <div id="vaes" ref={setSectionRef('vaes')} className={vizStyles.section}>
           <h2 className={vizStyles.sectionTitle}>VAEs: Approximate Inference via Variational Bound</h2>
 
           <p className={vizStyles.prose}>
@@ -273,7 +451,7 @@ export default function ProbabilisticGenerativeModelsPage() {
           </p>
         </div>
 
-        <div className={vizStyles.section}>
+        <div id="diffusion" ref={setSectionRef('diffusion')} className={vizStyles.section}>
           <h2 className={vizStyles.sectionTitle}>Diffusion Models: Iterative Denoising</h2>
 
           <p className={vizStyles.prose}>
@@ -338,7 +516,7 @@ export default function ProbabilisticGenerativeModelsPage() {
           </p>
         </div>
 
-        <div className={vizStyles.section}>
+        <div id="autoregressive" ref={setSectionRef('autoregressive')} className={vizStyles.section}>
           <h2 className={vizStyles.sectionTitle}>Autoregressive Models: Sequential Prediction</h2>
 
           <p className={vizStyles.prose}>
@@ -387,7 +565,7 @@ export default function ProbabilisticGenerativeModelsPage() {
           </div>
         </div>
 
-        <div className={vizStyles.section}>
+        <div id="summary" ref={setSectionRef('summary')} className={vizStyles.section}>
           <h2 className={vizStyles.sectionTitle}>Summary: The Modeling Tradeoffs</h2>
 
           <div style={{ overflowX: 'auto', marginTop: '1.5rem' }}>
@@ -442,7 +620,7 @@ export default function ProbabilisticGenerativeModelsPage() {
           </div>
         </div>
 
-        <div className={vizStyles.section}>
+        <div id="takeaways" ref={setSectionRef('takeaways')} className={vizStyles.section}>
           <h2 className={vizStyles.sectionTitle}>Key Takeaways</h2>
 
           <div style={{ display: 'grid', gap: '1rem' }}>
@@ -465,7 +643,7 @@ export default function ProbabilisticGenerativeModelsPage() {
           </div>
         </div>
 
-        <div className={vizStyles.section}>
+        <div id="frontiers" ref={setSectionRef('frontiers')} className={vizStyles.section}>
           <h2 className={vizStyles.sectionTitle}>Current Frontiers &amp; Challenges</h2>
 
           <p className={vizStyles.prose}>
@@ -533,7 +711,8 @@ export default function ProbabilisticGenerativeModelsPage() {
           </div>
         </div>
 
-      </section>
+        </main>
+      </div>
     </div>
   );
 }

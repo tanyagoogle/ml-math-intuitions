@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
 import ScalarDerivativeViz from '../../components/ScalarDerivativeViz';
@@ -8,40 +8,198 @@ import VectorGradientViz from '../../components/VectorGradientViz';
 import JacobianViz from '../../components/JacobianViz';
 import HessianViz from '../../components/HessianViz';
 
+const SECTIONS = [
+    { id: 'building-blocks', shortLabel: 'Building Blocks' },
+    { id: 'scalar-derivative', shortLabel: 'Derivative' },
+    { id: 'gradient', shortLabel: 'Gradient' },
+    { id: 'jacobian', shortLabel: 'Jacobian' },
+    { id: 'hessian', shortLabel: 'Hessian' },
+    { id: 'chain-rule', shortLabel: 'Chain Rule' },
+    { id: 'math-to-code', shortLabel: 'Math to Code' },
+    { id: 'summary', shortLabel: 'Summary' },
+];
+
 export default function MatrixCalculusPage() {
+    const [activeSection, setActiveSection] = useState(SECTIONS[0].id);
+    const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY + 200;
+            let currentSection = SECTIONS[0].id;
+            sectionRefs.current.forEach((element, id) => {
+                if (element && scrollPosition >= element.offsetTop) {
+                    currentSection = id;
+                }
+            });
+            setActiveSection(currentSection);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const scrollToSection = useCallback((id: string) => {
+        const element = sectionRefs.current.get(id);
+        if (element) {
+            const y = element.getBoundingClientRect().top + window.pageYOffset - 100;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+    }, []);
+
+    const setSectionRef = useCallback((id: string) => (el: HTMLElement | null) => {
+        if (el) sectionRefs.current.set(id, el);
+    }, []);
+
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] pb-24">
-            <nav className="p-6 flex justify-between items-center glass-panel m-4 mb-12">
-                <Link href="/" className="text-xl font-bold title-gradient hover:opacity-80 transition-opacity">
-                    Math Intuitions
+        <div style={{
+            maxWidth: '1400px',
+            margin: '0 auto',
+            padding: '2rem 3rem 4rem 3rem',
+        }}>
+            <header style={{
+                position: 'fixed',
+                top: 0,
+                left: '240px',
+                right: 0,
+                background: 'hsla(240, 10%, 4%, 0.95)',
+                backdropFilter: 'blur(12px)',
+                padding: '1rem 3rem',
+                zIndex: 50,
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            }}>
+                <Link href="/" style={{
+                    color: 'var(--text-dim)',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    display: 'inline-block',
+                    marginBottom: '0.5rem',
+                }}>
+                    &larr; Back to Concepts
                 </Link>
-                <div className="flex gap-6">
-                    <Link href="/" className="text-sm font-medium hover:text-[var(--accent)] transition-colors">
-                        Home
-                    </Link>
-                    <Link href="/loss-landscapes" className="text-sm font-medium hover:text-[var(--accent)] transition-colors">
-                        Loss Landscapes
-                    </Link>
-                </div>
-            </nav>
+                <h1 style={{
+                    fontSize: '1.75rem',
+                    fontWeight: 800,
+                    background: 'linear-gradient(135deg, #00f3ff 0%, #a78bfa 50%, #ff6b6b 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    margin: 0,
+                    marginBottom: '0.25rem',
+                }}>
+                    Matrix Calculus Visualized
+                </h1>
+                <p style={{
+                    color: 'var(--text-secondary)',
+                    fontSize: '0.95rem',
+                    margin: 0,
+                }}>
+                    The mathematics of change in high dimensions
+                </p>
+            </header>
+            <div style={{ height: '140px' }} />
 
-            <main className="container mx-auto px-4 max-w-3xl">
-                <header className={styles.header}>
-                    <h1 className="text-5xl font-black mb-6 tracking-tight leading-tight title-gradient">
-                        Matrix Calculus Visualized
-                    </h1>
-                    <p className={styles.introText}>
-                        The mathematics of change in high dimensions. Understanding gradients, Jacobians, and Hessians is essential for deep learning—these are the tools that let neural networks learn from data.
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-3 mt-8">
-                        <span className="px-3 py-1.5 text-xs bg-[var(--accent)]/10 text-[var(--accent)] rounded-full border border-[var(--accent)]/20">Backpropagation</span>
-                        <span className="px-3 py-1.5 text-xs bg-[var(--accent)]/10 text-[var(--accent)] rounded-full border border-[var(--accent)]/20">Optimization</span>
-                        <span className="px-3 py-1.5 text-xs bg-[var(--accent)]/10 text-[var(--accent)] rounded-full border border-[var(--accent)]/20">Neural Networks</span>
+            <div className="timeline-main" style={{
+                display: 'flex',
+                gap: '2.5rem',
+                position: 'relative',
+                marginLeft: '220px',
+            }}>
+                <nav style={{
+                    position: 'fixed',
+                    top: '2rem',
+                    left: '2rem',
+                    width: '200px',
+                    background: 'hsla(240, 10%, 6%, 0.95)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '1.25rem 1rem 1.25rem 1.5rem',
+                    zIndex: 100,
+                }} className="timeline-nav">
+                    <div style={{
+                        fontSize: '0.7rem',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                        color: 'var(--text-dim)',
+                        marginBottom: '1rem',
+                        paddingLeft: '1.5rem',
+                    }}>
+                        On this page
                     </div>
-                </header>
+                    <div style={{
+                        position: 'relative',
+                        paddingLeft: '1.5rem',
+                    }}>
+                        <div style={{
+                            position: 'absolute',
+                            left: '5px',
+                            top: '4px',
+                            bottom: '4px',
+                            width: '3px',
+                            background: 'rgba(255, 255, 255, 0.08)',
+                            borderRadius: '2px',
+                        }} />
+                        {SECTIONS.map((section, index) => {
+                            const isActive = activeSection === section.id;
+                            const isPast = SECTIONS.findIndex(s => s.id === activeSection) > index;
+                            return (
+                                <button
+                                    key={section.id}
+                                    onClick={() => scrollToSection(section.id)}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.75rem',
+                                        width: '100%',
+                                        padding: '0.6rem 0',
+                                        background: 'transparent',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        textAlign: 'left',
+                                        position: 'relative',
+                                    }}
+                                >
+                                    <span style={{
+                                        position: 'absolute',
+                                        left: '-1.5rem',
+                                        width: '13px',
+                                        height: '13px',
+                                        borderRadius: '50%',
+                                        background: isActive
+                                            ? 'var(--text-primary)'
+                                            : isPast
+                                                ? 'rgba(255, 255, 255, 0.5)'
+                                                : 'rgba(255, 255, 255, 0.2)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        transition: 'all 0.2s ease',
+                                        boxShadow: isActive ? '0 0 8px rgba(255, 255, 255, 0.3)' : 'none',
+                                    }} />
+                                    <span style={{
+                                        fontSize: '0.95rem',
+                                        fontWeight: isActive ? 600 : 400,
+                                        color: isActive
+                                            ? 'var(--text-primary)'
+                                            : isPast
+                                                ? 'var(--text-secondary)'
+                                                : 'var(--text-dim)',
+                                        lineHeight: 1.4,
+                                        transition: 'all 0.2s ease',
+                                    }}>
+                                        {section.shortLabel}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </nav>
 
+                <main style={{ flex: 1, minWidth: 0 }}>
                 {/* SECTION 1: NOTATION */}
-                <section className={styles.section}>
+                <section id="building-blocks" ref={setSectionRef('building-blocks')} className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>1. The Building Blocks</h2>
                     </div>
@@ -83,7 +241,7 @@ export default function MatrixCalculusPage() {
                 </section>
 
                 {/* SECTION 2: SCALAR DERIVATIVE */}
-                <section className={styles.section}>
+                <section id="scalar-derivative" ref={setSectionRef('scalar-derivative')} className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>2. The Scalar Derivative</h2>
                         <p className="text-sm text-[var(--text-dim)] mt-2">f: ℝ → ℝ</p>
@@ -148,7 +306,7 @@ export default function MatrixCalculusPage() {
                 </section>
 
                 {/* SECTION 3: THE GRADIENT */}
-                <section className={styles.section}>
+                <section id="gradient" ref={setSectionRef('gradient')} className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>3. The Gradient</h2>
                         <p className="text-sm text-[var(--text-dim)] mt-2">f: ℝ<sup>n</sup> → ℝ</p>
@@ -199,7 +357,7 @@ export default function MatrixCalculusPage() {
                 </section>
 
                 {/* SECTION 4: THE JACOBIAN */}
-                <section className={styles.section}>
+                <section id="jacobian" ref={setSectionRef('jacobian')} className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>4. The Jacobian</h2>
                         <p className="text-sm text-[var(--text-dim)] mt-2">F: ℝ<sup>n</sup> → ℝ<sup>m</sup></p>
@@ -287,7 +445,7 @@ export default function MatrixCalculusPage() {
                 </section>
 
                 {/* SECTION 5: THE HESSIAN */}
-                <section className={styles.section}>
+                <section id="hessian" ref={setSectionRef('hessian')} className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>5. The Hessian</h2>
                         <p className="text-sm text-[var(--text-dim)] mt-2">Second-order derivatives of f: ℝ<sup>n</sup> → ℝ</p>
@@ -378,7 +536,7 @@ export default function MatrixCalculusPage() {
                 </section>
 
                 {/* SECTION 6: CHAIN RULE */}
-                <section className={styles.section}>
+                <section id="chain-rule" ref={setSectionRef('chain-rule')} className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>6. The Chain Rule</h2>
                         <p className="text-sm text-[var(--text-dim)] mt-2">The backbone of backpropagation</p>
@@ -418,7 +576,7 @@ export default function MatrixCalculusPage() {
                 </section>
 
                 {/* SECTION 7: FROM MATH TO CODE */}
-                <section className={styles.section}>
+                <section id="math-to-code" ref={setSectionRef('math-to-code')} className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>7. From Math to Code</h2>
                         <p className="text-sm text-[var(--text-dim)] mt-2">How autodiff actually works</p>
@@ -549,7 +707,7 @@ export default function MatrixCalculusPage() {
                 </section>
 
                 {/* SUMMARY TABLE */}
-                <section className={styles.section}>
+                <section id="summary" ref={setSectionRef('summary')} className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>Summary</h2>
                     </div>
@@ -612,16 +770,8 @@ export default function MatrixCalculusPage() {
                         <li>Goodfellow, I., Bengio, Y., & Courville, A. (2016). <em>Deep Learning</em>. MIT Press.</li>
                     </ul>
                 </section>
-            </main>
-
-            <footer className="text-center text-[var(--text-dim)] py-16 border-t border-[var(--border-subtle)]">
-                <p className="text-sm">Designed to help visualize the math behind the code.</p>
-                <div className="mt-4 flex justify-center gap-6 text-sm">
-                    <a href="https://explained.ai/matrix-calculus/" target="_blank" className="hover:text-[var(--accent)] transition-colors">Explained.ai</a>
-                    <span>•</span>
-                    <Link href="/" className="hover:text-[var(--accent)] transition-colors">Back Home</Link>
-                </div>
-            </footer>
+                </main>
+            </div>
         </div>
     );
 }

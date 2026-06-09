@@ -9,7 +9,7 @@ interface Vertex {
 export default function HypercubeViz() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dimension, setDimension] = useState(3);
-  const [rotation, setRotation] = useState(0);
+  const rotationRef = useRef(0);
   const animationRef = useRef<number>(0);
 
   const generateHypercube = useCallback((dim: number): Vertex[] => {
@@ -106,12 +106,12 @@ export default function HypercubeViz() {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      setRotation(prev => prev + 0.008);
+      rotationRef.current += 0.008;
 
       const vertices = generateHypercube(dimension);
       const edges = generateEdges(dimension);
 
-      const projected = vertices.map(v => project(v, rotation, dimension));
+      const projected = vertices.map(v => project(v, rotationRef.current, dimension));
 
       edges.forEach(([i, j]) => {
         const p1 = projected[i];
@@ -161,7 +161,7 @@ export default function HypercubeViz() {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [dimension, rotation, generateHypercube, generateEdges, project]);
+  }, [dimension, generateHypercube, generateEdges, project]);
 
   const numVertices = Math.pow(2, dimension);
   const numEdges = dimension * Math.pow(2, dimension - 1);
