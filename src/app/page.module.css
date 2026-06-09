@@ -1,19 +1,58 @@
-.header {
-  padding: 4rem 0;
+.hero {
+  padding: 6rem 0 4rem;
   text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.subtitle {
+.heroEyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+.heroHeadline {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.5rem;
+}
+
+.heroSubtitle {
+  font-size: 1.15rem;
   color: var(--text-secondary);
-  font-size: 1.2rem;
-  margin-top: 1rem;
+  line-height: 1.7;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.section {
+  margin-bottom: 3rem;
+}
+
+.sectionHeading {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  padding: 2rem 0;
 }
 
 .card {
@@ -25,8 +64,8 @@
   text-decoration: none;
   color: var(--text-primary);
   transition: transform 0.2s var(--ease-spring), border-color 0.2s;
-    overflow: hidden;
-    display: block;
+  overflow: hidden;
+  display: block;
 }
 
 .card:hover {
@@ -39,7 +78,7 @@
   z-index: 10;
 }
 
-.card h2 {
+.card h3 {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
   font-family: var(--font-mono);
@@ -48,18 +87,7 @@
 .card p {
   color: var(--text-secondary);
   line-height: 1.5;
-  margin-bottom: 1rem;
-}
-
-.tag {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  background: rgba(0, 243, 255, 0.1);
-  color: var(--text-accent);
-  border-radius: 99px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  font-family: var(--font-mono);
+  margin-bottom: 0;
 }
 
 .cardGlow {
@@ -76,10 +104,4 @@
 
 .card:hover .cardGlow {
   opacity: 1;
-}
-
-.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-  filter: grayscale(1);
 }
