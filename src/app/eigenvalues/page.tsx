@@ -1,0 +1,61 @@
+import Link from 'next/link';
+import EigenvaluesContent from './EigenvaluesContent';
+
+export const metadata = {
+  title: 'Eigenvalues - Math Intuitions',
+  description: 'Interactive exploration of Eigenvalues in Neural Networks',
+};
+
+export default function EigenvaluePage() {
+  return (
+    <div style={{
+      maxWidth: '1400px',
+      margin: '0 auto',
+      padding: '2rem 3rem 4rem 3rem',
+    }}>
+      <header style={{
+        position: 'fixed',
+        top: 0,
+        left: '240px',
+        right: 0,
+        background: 'hsla(240, 10%, 4%, 0.95)',
+        backdropFilter: 'blur(12px)',
+        padding: '1rem 3rem',
+        zIndex: 50,
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+      }}>
+        <Link href="/" style={{
+          color: 'var(--text-dim)',
+          textDecoration: 'none',
+          fontSize: '0.85rem',
+          display: 'inline-block',
+          marginBottom: '0.5rem',
+        }}>
+          &larr; Back to Concepts
+        </Link>
+        <h1 style={{
+          fontSize: '1.75rem',
+          fontWeight: 800,
+          background: 'linear-gradient(135deg, #00f3ff 0%, #a78bfa 50%, #ff6b6b 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          margin: 0,
+          marginBottom: '0.25rem',
+        }}>
+          Eigenvalues & Stability of Neural Networks
+        </h1>
+        <p style={{
+          color: 'var(--text-secondary)',
+          fontSize: '0.95rem',
+          margin: 0,
+        }}>
+          Interactive exploration of Eigenvalues in Neural Networks and how it affects numerical stability
+        </p>
+      </header>
+      <div style={{ height: '140px' }} />
+
+      <EigenvaluesContent />
+    </div>
+  );
+}
