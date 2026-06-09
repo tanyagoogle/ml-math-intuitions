@@ -33,7 +33,9 @@
 
 .svg {
   width: 100%;
+  max-width: 420px;
   height: auto;
+  margin: 0 auto;
   background: hsl(var(--bg-primary-hsl));
   border-radius: 12px;
   border: 1px solid var(--border-subtle);
